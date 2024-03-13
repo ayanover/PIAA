@@ -10,8 +10,5 @@ std::vector<int> getTestData()
 
 int main(int argc, char* argv[])
 {
-    vector<int> data = getTestData();
-    std::cout<< std::sort()<<std::endl;
-
     return 0;
 }

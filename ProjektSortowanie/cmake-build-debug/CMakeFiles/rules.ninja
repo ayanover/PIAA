@@ -80,7 +80,7 @@ rule CUSTOM_COMMAND
 # Rule for re-running cmake.
 
 rule RERUN_CMAKE
-  command = C:\Users\rexiv\AppData\Local\Programs\CLion\bin\cmake\win\x64\bin\cmake.exe --regenerate-during-build -SC:\Users\rexiv\Desktop\ProjektSortowanie -BC:\Users\rexiv\Desktop\ProjektSortowanie\cmake-build-debug
+  command = C:\Users\rexiv\AppData\Local\Programs\CLion\bin\cmake\win\x64\bin\cmake.exe --regenerate-during-build -SC:\Users\rexiv\CLionProjects\PIAA\ProjektSortowanie -BC:\Users\rexiv\CLionProjects\PIAA\ProjektSortowanie\cmake-build-debug
   description = Re-running CMake...
   generator = 1
 
