@@ -1,8 +1,3 @@
-#ifndef SORTING_ALGORITHMS_QUICKSORT_H
-#define SORTING_ALGORITHMS_QUICKSORT_H
-
-#include <vector>
-#include <iostream>
 template <typename T>
 class QuickSort
 {
@@ -13,8 +8,12 @@ public:
         {
             typename std::vector<T>::iterator pivotIndex = partition(start, end);
 
-            sort(start, pivotIndex);
-            sort(pivotIndex + 1, end);
+            if(start < pivotIndex){
+                sort(start, pivotIndex);
+            }
+            if(pivotIndex + 1 < end){
+                sort(pivotIndex + 1, end);
+            }
         }
     }
 
@@ -22,18 +21,17 @@ private:
     typename std::vector<T>::iterator partition(typename std::vector<T>::iterator start, typename std::vector<T>::iterator end)
     {
         typename std::vector<T>::iterator pivot = start;
-        std::cout<<*pivot << std::endl;
-
         typename std::vector<T>::iterator left = start + 1;
-        typename std::vector<T>::iterator right = end;
+        typename std::vector<T>::iterator right = end - 1;
 
         while (left <= right)
         {
-            while (*right > *pivot)
+            while (left <= right && *right > *pivot)
             {
                 right--;
             }
-            while (*left <= *pivot){
+            while (left <= right && *left <= *pivot)
+            {
                 left++;
             }
             if (left < right)
@@ -43,12 +41,8 @@ private:
             else
             {
                 std::iter_swap(pivot, right);
-                return right;
             }
-
         }
-        return left;
+        return right;
     }
 };
-
-#endif //SORTING_ALGORITHMS_QUICKSORT_H
