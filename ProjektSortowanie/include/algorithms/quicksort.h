@@ -1,3 +1,9 @@
+#ifndef SORTING_ALGORITHMS_QUICKSORT_H
+#define SORTING_ALGORITHMS_QUICKSORT_H
+#include <vector>
+
+// sortowanie przez scalanie
+
 template <typename T>
 class QuickSort
 {
@@ -46,3 +52,4 @@ private:
         return right;
     }
 };
+#endif //SORTING_ALGORITHMS_QUICKSORT_H
