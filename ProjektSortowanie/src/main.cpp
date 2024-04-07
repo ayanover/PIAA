@@ -33,7 +33,7 @@ void UpdateProgress(short iteration){
 double average(double arr[], long size) {
     double sum = 0.0;
 
-    for (int i = 0; i < 1; ++i) {
+    for (int i = 0; i < 15; ++i) {
         sum += arr[i];
     }
 
@@ -61,7 +61,7 @@ std::vector<double> getAverageTimes(long size, float percentSolved, bool isRever
         quickSort.sort(data.begin(), data.end());
         auto end = std::chrono::high_resolution_clock::now();
 
-        std::chrono::duration<double> duration = end - start;
+        std::chrono::duration<double> duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
         quicksort_measurements[i] = duration.count();
 
         // mergeSort
@@ -71,7 +71,7 @@ std::vector<double> getAverageTimes(long size, float percentSolved, bool isRever
         mergeSort.sort(data.begin(), data.end());
         end = std::chrono::high_resolution_clock::now();
 
-        duration = end - start;
+        duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
         mergesort_measurements[i] = duration.count();
 
         // introSort
@@ -81,7 +81,7 @@ std::vector<double> getAverageTimes(long size, float percentSolved, bool isRever
         introSort.sort(data.begin(), data.end());
         end = std::chrono::high_resolution_clock::now();
 
-        duration = end - start;
+        duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
         introsort_measurements[i] = duration.count();
     }
 
@@ -97,10 +97,10 @@ void SaveMeasurementsToFile(std::vector<double> data, std::string filename){
     std::ofstream outputFile(filename);
     if (outputFile.is_open()) {
         for (int i = 0; i < data.size(); i++) {
-            outputFile << data[i] * 1000 << "\n";
+            outputFile << data[i] << "\n";
         }
         outputFile.close();
-        std::cout << "Measurements saved to quicksort_measurements.txt" << std::endl;
+        std::cout << "Measurements saved to " << filename << std::endl;
     } else {
         std::cerr << "Unable to open file for writing." << std::endl;
     }
