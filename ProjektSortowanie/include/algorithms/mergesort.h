@@ -32,7 +32,6 @@ private:
         auto right = middle;
         auto tempIt = temp.begin();
 
-        // Merge the two halves into temp
         while (left < middle && right < end) {
             if (*left < *right) {
                 *tempIt++ = std::move(*left++);
@@ -41,7 +40,6 @@ private:
             }
         }
 
-        // Copy the remaining elements from left or right half, if any
         while (left < middle) {
             *tempIt++ = std::move(*left++);
         }
@@ -49,7 +47,6 @@ private:
             *tempIt++ = std::move(*right++);
         }
 
-        // Copy the merged elements from temp back to the original range
         std::move(temp.begin(), temp.end(), start);
     }
 };
