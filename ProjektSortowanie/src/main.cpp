@@ -33,7 +33,7 @@ void UpdateProgress(short iteration){
 double average(double arr[], long size) {
     double sum = 0.0;
 
-    for (int i = 0; i < 15; ++i) {
+    for (int i = 0; i < 100; ++i) {
         sum += arr[i];
     }
 
@@ -46,10 +46,10 @@ std::vector<double> getAverageTimes(long size, float percentSolved, bool isRever
     QuickSort<int> quickSort;
     MergeSort<int> mergeSort;
     IntroSort<int> introSort;
-    double quicksort_measurements[15];
-    double mergesort_measurements[15];
-    double introsort_measurements[15];
-    for(int i=0; i<15; i++){
+    double quicksort_measurements[100];
+    double mergesort_measurements[100];
+    double introsort_measurements[100];
+    for(int i=0; i<100; i++){
         auto unsortedData = getTestData(size, percentSolved, isReversed);
 
         //UpdateProgress(i+1);
@@ -97,7 +97,7 @@ void SaveMeasurementsToFile(std::vector<double> data, std::string filename){
     std::ofstream outputFile(filename);
     if (outputFile.is_open()) {
         for (int i = 0; i < data.size(); i++) {
-            outputFile << data[i] << "\n";
+            outputFile << data[i] * 1000 << "\n";
         }
         outputFile.close();
         std::cout << "Measurements saved to " << filename << std::endl;
@@ -122,9 +122,9 @@ int main(int argc, char* argv[])
     std::vector<double> mergesortMeasurements;
     std::vector<double> introsortMeasurements;
 
-    for(long size : VECTOR_SIZES){
+    for(float percent : PERCENT_SOLVED){
 
-        for(float percent : PERCENT_SOLVED){
+        for(long size : VECTOR_SIZES){
             std::vector<double> measurements = getAverageTimes(size, percent, false);
 
             quicksortMeasurements.push_back(measurements[0]);
@@ -137,9 +137,9 @@ int main(int argc, char* argv[])
         //mergesortMeasurements.push_back(measurements[1]);
         //introsortMeasurements.push_back(measurements[2]);
 
-        SaveMeasurementsToFile(quicksortMeasurements, getSizeName(size)+"_quicksort.txt");
-        SaveMeasurementsToFile(mergesortMeasurements, getSizeName(size)+"_mergesort.txt");
-        SaveMeasurementsToFile(introsortMeasurements, getSizeName(size)+"_introsort.txt");
+        SaveMeasurementsToFile(quicksortMeasurements, std::to_string(percent)+"_quicksort.txt");
+        SaveMeasurementsToFile(mergesortMeasurements, std::to_string(percent)+"_mergesort.txt");
+        SaveMeasurementsToFile(introsortMeasurements, std::to_string(percent)+"_introsort.txt");
 
         quicksortMeasurements.clear();
         mergesortMeasurements.clear();

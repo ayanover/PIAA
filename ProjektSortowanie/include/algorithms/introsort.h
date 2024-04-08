@@ -10,6 +10,37 @@ class IntroSort
 private:
     static const int INSERTION_SORT_THRESHOLD = 16;
 
+    void heapSort(typename std::vector<T>::iterator start, typename std::vector<T>::iterator end) {
+        int n = end - start;
+        for (int i = n / 2 - 1; i >= 0; i--)
+            heapify(start, end, i);
+
+        for (int i = n - 1; i > 0; i--) {
+            std::swap(*(start), *(start + i));
+
+            heapify(start, start + i, 0);
+        }
+    }
+
+    void heapify(typename std::vector<T>::iterator start, typename std::vector<T>::iterator end, int i) {
+        int largest = i;
+        int left = 2 * i + 1;
+        int right = 2 * i + 2;
+
+        auto n = end - start;
+
+        if (left < n && *(start + left) > *(start + largest))
+            largest = left;
+
+        if (right < n && *(start + right) > *(start + largest))
+            largest = right;
+
+        if (largest != i) {
+            std::swap(*(start + i), *(start + largest));
+            heapify(start, end, largest);
+        }
+    }
+
     void insertionSort(typename std::vector<T>::iterator start, typename std::vector<T>::iterator end)
     {
         for (auto i = start + 1; i != end; ++i)
@@ -28,7 +59,7 @@ private:
     typename std::vector<T>::iterator partition(typename std::vector<T>::iterator start,
                                                 typename std::vector<T>::iterator end)
     {
-        auto pivot = *start; // Choose the first element as the pivot
+        auto pivot = *start;
         auto i = start - 1;
         auto j = end;
 
@@ -65,8 +96,7 @@ private:
 
         if (depthLimit == 0)
         {
-            std::make_heap(start, end);
-            std::sort_heap(start, end);
+            heapSort(start, end);
             return;
         }
 
@@ -81,7 +111,7 @@ private:
 public:
     void sort(typename std::vector<T>::iterator start, typename std::vector<T>::iterator end)
     {
-        int depthLimit = 2 * std::log(end - start); // Depth limit for quicksort recursion
+        int depthLimit = 2 * std::log(end - start);
         introsort(start, end, depthLimit);
     }
 };
