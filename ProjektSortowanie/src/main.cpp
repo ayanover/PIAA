@@ -12,6 +12,15 @@
 #include "../include/TableGenerator.h"
 using namespace std::string_literals;
 
+bool CheckCorrectSorting(std::vector<int> arr, std::vector<int> sortedArr){
+    std::sort(arr.begin(), arr.end());
+    if(arr == sortedArr){
+        return true;
+    }
+    else{
+        return false;
+    }
+}
 std::vector<int> getTestData(long size, float percentSolved, bool isReversed)
 {
     if(isReversed){
@@ -60,7 +69,9 @@ std::vector<double> getAverageTimes(long size, float percentSolved, bool isRever
         auto start = std::chrono::high_resolution_clock::now();
         quickSort.sort(data.begin(), data.end());
         auto end = std::chrono::high_resolution_clock::now();
-
+        if(!CheckCorrectSorting(unsortedData, data)){
+            std::cout << "Sorting Unsuccessful! Aborting..." << std::endl;
+        };
         std::chrono::duration<double> duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
         quicksort_measurements[i] = duration.count();
 
@@ -70,6 +81,9 @@ std::vector<double> getAverageTimes(long size, float percentSolved, bool isRever
         start = std::chrono::high_resolution_clock::now();
         mergeSort.sort(data.begin(), data.end());
         end = std::chrono::high_resolution_clock::now();
+        if(!CheckCorrectSorting(unsortedData, data)){
+            std::cout << "Sorting Unsuccessful! Aborting..." << std::endl;;
+        };
 
         duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
         mergesort_measurements[i] = duration.count();
@@ -80,6 +94,9 @@ std::vector<double> getAverageTimes(long size, float percentSolved, bool isRever
         start = std::chrono::high_resolution_clock::now();
         introSort.sort(data.begin(), data.end());
         end = std::chrono::high_resolution_clock::now();
+        if(!CheckCorrectSorting(unsortedData, data)){
+            std::cout << "Sorting Unsuccessful! Aborting..." << std::endl;;
+        };
 
         duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
         introsort_measurements[i] = duration.count();
@@ -105,14 +122,6 @@ void SaveMeasurementsToFile(std::vector<double> data, std::string filename){
         std::cerr << "Unable to open file for writing." << std::endl;
     }
 }
-std::string getSizeName(long size){
-    if(size/1000000>=1){
-        return std::to_string(size/1000000)+"m";
-    }
-    else{
-        return std::to_string(size/1000)+"k";
-    }
-}
 
 int main(int argc, char* argv[])
 {
@@ -122,24 +131,24 @@ int main(int argc, char* argv[])
     std::vector<double> mergesortMeasurements;
     std::vector<double> introsortMeasurements;
 
-    for(float percent : PERCENT_SOLVED){
+    for(long size : VECTOR_SIZES){
 
-        for(long size : VECTOR_SIZES){
+        for(float percent : PERCENT_SOLVED){
             std::vector<double> measurements = getAverageTimes(size, percent, false);
 
             quicksortMeasurements.push_back(measurements[0]);
             mergesortMeasurements.push_back(measurements[1]);
             introsortMeasurements.push_back(measurements[2]);
         }
-        //std::vector<double> measurements = getAverageTimes(size, 100, true);
+        std::vector<double> measurements = getAverageTimes(size, 100, true);
 
-        //quicksortMeasurements.push_back(measurements[0]);
-        //mergesortMeasurements.push_back(measurements[1]);
-        //introsortMeasurements.push_back(measurements[2]);
+        quicksortMeasurements.push_back(measurements[0]);
+        mergesortMeasurements.push_back(measurements[1]);
+        introsortMeasurements.push_back(measurements[2]);
 
-        SaveMeasurementsToFile(quicksortMeasurements, std::to_string(percent)+"_quicksort.txt");
-        SaveMeasurementsToFile(mergesortMeasurements, std::to_string(percent)+"_mergesort.txt");
-        SaveMeasurementsToFile(introsortMeasurements, std::to_string(percent)+"_introsort.txt");
+        SaveMeasurementsToFile(quicksortMeasurements, std::to_string(size)+"_quicksort.txt");
+        SaveMeasurementsToFile(mergesortMeasurements, std::to_string(size)+"_mergesort.txt");
+        SaveMeasurementsToFile(introsortMeasurements, std::to_string(size)+"_introsort.txt");
 
         quicksortMeasurements.clear();
         mergesortMeasurements.clear();
