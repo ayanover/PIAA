@@ -16,3 +16,4 @@ target_link_libraries(efficiency_experiments sorting_algorithms_lib)
 add_executable(custom_tests
         src/custom_tests.cpp)
 target_link_libraries(custom_tests sorting_algorithms_lib)
+add_executable(new_target ../Graphs/src/main.cpp)

@@ -65,6 +65,7 @@ CMAKE_BINARY_DIR = C:\Users\rexiv\CLionProjects\PIAA\ProjektSortowanie\cmake-bui
 all: CMakeFiles/test_sorting_algorithms.dir/all
 all: CMakeFiles/efficiency_experiments.dir/all
 all: CMakeFiles/custom_tests.dir/all
+all: CMakeFiles/new_target.dir/all
 .PHONY : all
 
 # The main recursive "preinstall" target.
@@ -75,6 +76,7 @@ preinstall:
 clean: CMakeFiles/test_sorting_algorithms.dir/clean
 clean: CMakeFiles/efficiency_experiments.dir/clean
 clean: CMakeFiles/custom_tests.dir/clean
+clean: CMakeFiles/new_target.dir/clean
 .PHONY : clean
 
 #=============================================================================
@@ -84,7 +86,7 @@ clean: CMakeFiles/custom_tests.dir/clean
 CMakeFiles/test_sorting_algorithms.dir/all:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\test_sorting_algorithms.dir\build.make CMakeFiles/test_sorting_algorithms.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\test_sorting_algorithms.dir\build.make CMakeFiles/test_sorting_algorithms.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=C:\Users\rexiv\CLionProjects\PIAA\ProjektSortowanie\cmake-build-debug\CMakeFiles --progress-num=5,6 "Built target test_sorting_algorithms"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=C:\Users\rexiv\CLionProjects\PIAA\ProjektSortowanie\cmake-build-debug\CMakeFiles --progress-num=7,8 "Built target test_sorting_algorithms"
 .PHONY : CMakeFiles/test_sorting_algorithms.dir/all
 
 # Build rule for subdir invocation for target.
@@ -154,6 +156,32 @@ custom_tests: CMakeFiles/custom_tests.dir/rule
 CMakeFiles/custom_tests.dir/clean:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\custom_tests.dir\build.make CMakeFiles/custom_tests.dir/clean
 .PHONY : CMakeFiles/custom_tests.dir/clean
+
+#=============================================================================
+# Target rules for target CMakeFiles/new_target.dir
+
+# All Build rule for target.
+CMakeFiles/new_target.dir/all:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\new_target.dir\build.make CMakeFiles/new_target.dir/depend
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\new_target.dir\build.make CMakeFiles/new_target.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=C:\Users\rexiv\CLionProjects\PIAA\ProjektSortowanie\cmake-build-debug\CMakeFiles --progress-num=5,6 "Built target new_target"
+.PHONY : CMakeFiles/new_target.dir/all
+
+# Build rule for subdir invocation for target.
+CMakeFiles/new_target.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start C:\Users\rexiv\CLionProjects\PIAA\ProjektSortowanie\cmake-build-debug\CMakeFiles 2
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\Makefile2 CMakeFiles/new_target.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start C:\Users\rexiv\CLionProjects\PIAA\ProjektSortowanie\cmake-build-debug\CMakeFiles 0
+.PHONY : CMakeFiles/new_target.dir/rule
+
+# Convenience name for target.
+new_target: CMakeFiles/new_target.dir/rule
+.PHONY : new_target
+
+# clean rule for target.
+CMakeFiles/new_target.dir/clean:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\new_target.dir\build.make CMakeFiles/new_target.dir/clean
+.PHONY : CMakeFiles/new_target.dir/clean
 
 #=============================================================================
 # Special targets to cleanup operation of make.

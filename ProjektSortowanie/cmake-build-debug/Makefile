@@ -154,6 +154,43 @@ custom_tests/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\custom_tests.dir\build.make CMakeFiles/custom_tests.dir/build
 .PHONY : custom_tests/fast
 
+#=============================================================================
+# Target rules for targets named new_target
+
+# Build rule for target.
+new_target: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\Makefile2 new_target
+.PHONY : new_target
+
+# fast build rule for target.
+new_target/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\new_target.dir\build.make CMakeFiles/new_target.dir/build
+.PHONY : new_target/fast
+
+C_/Users/rexiv/CLionProjects/PIAA/Graphs/src/main.obj: C_/Users/rexiv/CLionProjects/PIAA/Graphs/src/main.cpp.obj
+.PHONY : C_/Users/rexiv/CLionProjects/PIAA/Graphs/src/main.obj
+
+# target to build an object file
+C_/Users/rexiv/CLionProjects/PIAA/Graphs/src/main.cpp.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\new_target.dir\build.make CMakeFiles/new_target.dir/C_/Users/rexiv/CLionProjects/PIAA/Graphs/src/main.cpp.obj
+.PHONY : C_/Users/rexiv/CLionProjects/PIAA/Graphs/src/main.cpp.obj
+
+C_/Users/rexiv/CLionProjects/PIAA/Graphs/src/main.i: C_/Users/rexiv/CLionProjects/PIAA/Graphs/src/main.cpp.i
+.PHONY : C_/Users/rexiv/CLionProjects/PIAA/Graphs/src/main.i
+
+# target to preprocess a source file
+C_/Users/rexiv/CLionProjects/PIAA/Graphs/src/main.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\new_target.dir\build.make CMakeFiles/new_target.dir/C_/Users/rexiv/CLionProjects/PIAA/Graphs/src/main.cpp.i
+.PHONY : C_/Users/rexiv/CLionProjects/PIAA/Graphs/src/main.cpp.i
+
+C_/Users/rexiv/CLionProjects/PIAA/Graphs/src/main.s: C_/Users/rexiv/CLionProjects/PIAA/Graphs/src/main.cpp.s
+.PHONY : C_/Users/rexiv/CLionProjects/PIAA/Graphs/src/main.s
+
+# target to generate assembly for a file
+C_/Users/rexiv/CLionProjects/PIAA/Graphs/src/main.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\new_target.dir\build.make CMakeFiles/new_target.dir/C_/Users/rexiv/CLionProjects/PIAA/Graphs/src/main.cpp.s
+.PHONY : C_/Users/rexiv/CLionProjects/PIAA/Graphs/src/main.cpp.s
+
 src/custom_tests.obj: src/custom_tests.cpp.obj
 .PHONY : src/custom_tests.obj
 
@@ -236,7 +273,11 @@ help:
 	@echo ... rebuild_cache
 	@echo ... custom_tests
 	@echo ... efficiency_experiments
+	@echo ... new_target
 	@echo ... test_sorting_algorithms
+	@echo ... C_/Users/rexiv/CLionProjects/PIAA/Graphs/src/main.obj
+	@echo ... C_/Users/rexiv/CLionProjects/PIAA/Graphs/src/main.i
+	@echo ... C_/Users/rexiv/CLionProjects/PIAA/Graphs/src/main.s
 	@echo ... src/custom_tests.obj
 	@echo ... src/custom_tests.i
 	@echo ... src/custom_tests.s
