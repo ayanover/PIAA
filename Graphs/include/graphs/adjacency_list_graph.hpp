@@ -3,7 +3,7 @@
 
 #include <memory>
 
-#include "graphs/graph.hpp"
+#include "graph.hpp"
 
 class AdjacencyListGraph : public Graph
 {

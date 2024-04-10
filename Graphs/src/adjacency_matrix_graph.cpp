@@ -1,4 +1,4 @@
-#include "graphs/adjacency_matrix_graph.hpp"
+#include "../include/graphs/adjacency_matrix_graph.hpp"
 
 std::unique_ptr<Graph> AdjacencyMatrixGraph::createGraph(std::istream& is)
 {

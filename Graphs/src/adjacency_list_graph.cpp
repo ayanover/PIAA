@@ -1,4 +1,4 @@
-#include "graphs/adjacency_list_graph.hpp"
+#include "../include/graphs/adjacency_list_graph.hpp"
 
 std::unique_ptr<Graph> AdjacencyListGraph::createGraph(std::istream& is)
 {

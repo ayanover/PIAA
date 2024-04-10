@@ -1,8 +1,8 @@
 #define CATCH_CONFIG_MAIN
 
-#include "graphs/adjacency_list_graph.hpp"
-#include "graphs/adjacency_matrix_graph.hpp"
-#include "graphs/minimum_spanning_tree_algorithms.hpp"
+#include "../include/graphs/adjacency_list_graph.hpp"
+#include "../include/graphs/adjacency_matrix_graph.hpp"
+#include "../include/graphs/minimum_spanning_tree_algorithms.hpp"
 #include <filesystem>
 #include <fstream>
 

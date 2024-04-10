@@ -1,7 +1,7 @@
 #ifndef MINIMUM_SPANNING_TREE_ALGORITHMS_HPP_
 #define MINIMUM_SPANNING_TREE_ALGORITHMS_HPP_
 
-#include "graphs/graph.hpp"
+#include "graph.hpp"
 #include <vector>
 
 struct MinimumSpanningEdge {

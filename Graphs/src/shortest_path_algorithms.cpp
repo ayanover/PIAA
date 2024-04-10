@@ -1,4 +1,4 @@
-#include "graphs/shortest_path_algorithms.hpp"
+#include "../include/graphs/shortest_path_algorithms.hpp"
 
 void dijkstra(Graph& graph, int sourceIndex, ShortestPathResult& result)
 {

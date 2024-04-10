@@ -1,7 +1,7 @@
 #ifndef SHORTEST_PATH_ALGORITHMS_HPP_
 #define SHORTEST_PATH_ALGORITHMS_HPP_
 
-#include "graphs/graph.hpp"
+#include "graph.hpp"
 
 #include <map>
 #include <utility>
