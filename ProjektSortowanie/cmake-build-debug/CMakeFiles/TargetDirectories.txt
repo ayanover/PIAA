@@ -1,5 +1,6 @@
 C:/Users/rexiv/CLionProjects/PIAA/ProjektSortowanie/cmake-build-debug/CMakeFiles/test_sorting_algorithms.dir
 C:/Users/rexiv/CLionProjects/PIAA/ProjektSortowanie/cmake-build-debug/CMakeFiles/efficiency_experiments.dir
 C:/Users/rexiv/CLionProjects/PIAA/ProjektSortowanie/cmake-build-debug/CMakeFiles/custom_tests.dir
+C:/Users/rexiv/CLionProjects/PIAA/ProjektSortowanie/cmake-build-debug/CMakeFiles/new_target.dir
 C:/Users/rexiv/CLionProjects/PIAA/ProjektSortowanie/cmake-build-debug/CMakeFiles/edit_cache.dir
 C:/Users/rexiv/CLionProjects/PIAA/ProjektSortowanie/cmake-build-debug/CMakeFiles/rebuild_cache.dir
