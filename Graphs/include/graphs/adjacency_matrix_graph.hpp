@@ -22,7 +22,7 @@ public:
     }
 
     // Function to add an edge between v1 and v2
-    void addEdge(int v1, int v2) override
+    void addEdge(int v1, int v2, int weight) override
     {
         adjMatrix[v1][v2] = 1;
         adjMatrix[v2][v1] = 1; // Undirected graph, so add edge in both directions

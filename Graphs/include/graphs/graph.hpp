@@ -14,7 +14,9 @@ public:
     explicit Graph(int vertices) : V(vertices) {}
 
     // Pure virtual function to add an edge between v1 and v2
-    virtual void addEdge(int v1, int v2) = 0;
+    virtual void addEdge(int v1, int v2, int weight) = 0;
+
+    virtual int getEdgeWeight(int v1, int v2) = 0;
 
     // Pure virtual function to print the adjacency list
     virtual void printAdjList() = 0;

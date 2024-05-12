@@ -34,6 +34,24 @@ public:
         adjList[v2].emplace_back(v1, weight);
     }
 
+    int getEdgeWeight(int v1, int v2) override
+    {
+        if (v1 >= V || v2 >= V || v1 < 0 || v2 < 0)
+        {
+            return -1;
+        }
+
+        for (const Edge &edge : adjList[v1])
+        {
+            if (edge.dest == v2)
+            {
+                return edge.weight;
+            }
+        }
+
+        return -1;
+    }
+
     void printAdjList() override
     {
         for (int i = 0; i < V; ++i)
@@ -174,23 +192,7 @@ public:
         return result;
     }
 
-
-    static std::unique_ptr<Graph> createGraph(std::istream &is)
-    {
-        int V, E;
-        is >> V >> E;
-
-        std::unique_ptr<AdjacencyListGraph> graph = std::make_unique<AdjacencyListGraph>(V);
-
-        int v1, v2, weight;
-        for (int i = 0; i < E; ++i)
-        {
-            is >> v1 >> v2 >> weight;
-            graph->insertEdge(v1, v2, weight);
-        }
-
-        return std::move(graph);
-    }
+    std::unique_ptr<Graph> createGraph(std::istream &is);
 };
 
 #endif /* ADJACENCY_LIST_GRAPH_HPP_ */
