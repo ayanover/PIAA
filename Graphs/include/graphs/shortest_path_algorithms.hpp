@@ -16,6 +16,6 @@
 using ShortestPathResult = std::map<int, std::pair<int, std::vector<int>>>;
 
 void dijkstra(Graph& graph, int sourceIndex, ShortestPathResult& result);
-bool bellmanFord(Graph& graph, int sourceIndex, ShortestPathResult& result);
+bool bellmanFord(Graph& graph, int source, ShortestPathResult& result);
 
 #endif /* SHORTEST_PATH_ALGORITHMS_HPP_ */

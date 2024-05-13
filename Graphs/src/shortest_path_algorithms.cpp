@@ -6,6 +6,7 @@
 #include <queue>
 #include <limits>
 #include <map>
+#include <algorithm>
 
 
 void dijkstra(Graph &graph, int sourceIndex, ShortestPathResult &result)
@@ -30,7 +31,7 @@ void dijkstra(Graph &graph, int sourceIndex, ShortestPathResult &result)
         result[u] = {uDist, {}};
 
         std::vector<int> neighbors = graph.incidentEdges(u);
-        for (int v : neighbors)
+        for (int &v : neighbors)
            {
             std::vector<int> endVertices = graph.endVertices(v);
             int oppositeVertex = (u == endVertices[0]) ? endVertices[1] : endVertices[0];
@@ -51,36 +52,63 @@ void dijkstra(Graph &graph, int sourceIndex, ShortestPathResult &result)
     }
 }
 
-bool bellmanFord(Graph& graph, int sourceIndex, ShortestPathResult& result)
+bool bellmanFord(Graph& graph, int source, ShortestPathResult& result)
 {
-    int V = graph.V;
-    int E = graph.E;
-    result.distance.resize(V, numeric_limits<int>::max()); // Initialize distances to infinity
-    result.predecessor.resize(V, -1); // Initialize predecessors to -1
-    result.distance[sourceIndex] = 0; // Distance to source vertex is 0
+    const int INF = std::numeric_limits<int>::max();
+    int V = graph.vertices().size();
+    std::vector<int> distance(V, INF);
+    distance[source] = 0;
 
-    // Relax all edges V-1 times
+    // Relax all edges |V| - 1 times
     for (int i = 0; i < V - 1; ++i) {
-        for (int j = 0; j < E; ++j) {
-            int u = graph.edges[j].source;
-            int v = graph.edges[j].destination;
-            int weight = graph.edges[j].weight;
-            if (result.getEdgeWeight[u] != numeric_limits<int>::max() && result.distance[u] + weight < result.distance[v]) {
-                result.distance[v] = result.distance[u] + weight;
-                result.predecessor[v] = u;
+        for (int u = 0; u < V; ++u) {
+            std::vector<int> adjacentEdges = graph.incidentEdges(u);
+            for (int e : adjacentEdges) {
+                auto endpoints = graph.endVertices(e);
+                int v = (endpoints[0] == u) ? endpoints[1] : endpoints[0];
+                int weight = graph.getEdgeWeight(u, v);
+                if (distance[u] != INF && distance[u] + weight < distance[v]) {
+                    distance[v] = distance[u] + weight;
+                }
             }
         }
     }
 
-    // Check for negative-weight cycles
-    for (int i = 0; i < E; ++i) {
-        int u = graph.edges[i].source;
-        int v = graph.edges[i].destination;
-        int weight = graph.edges[i].weight;
-        if (result.distance[u] != numeric_limits<int>::max() && result.distance[u] + weight < result.distance[v]) {
-            cout << "Graph contains negative weight cycle\n";
-            return;
+    // Check for negative weight cycles
+    for (int u = 0; u < V; ++u) {
+        std::vector<int> adjacentEdges = graph.incidentEdges(u);
+        for (int e : adjacentEdges) {
+            auto endpoints = graph.endVertices(e);
+            int v = (endpoints[0] == u) ? endpoints[1] : endpoints[0];
+            int weight = graph.getEdgeWeight(u, v);
+            if (distance[u] != INF && distance[u] + weight < distance[v]) {
+                // Negative weight cycle detected
+                throw std::runtime_error("Graph contains a negative weight cycle");
+            }
         }
     }
-    return true;
+
+    // Store shortest paths in result variable
+    for (int i = 0; i < V; ++i) {
+        if (i != source && distance[i] != INF) {
+            std::vector<int> path;
+            int current = i;
+            while (current != source) {
+                path.push_back(current);
+                std::vector<int> adjacentEdges = graph.incidentEdges(current);
+                for (int e : adjacentEdges) {
+                    auto endpoints = graph.endVertices(e);
+                    int v = (endpoints[0] == current) ? endpoints[1] : endpoints[0];
+                    int weight = graph.getEdgeWeight(current, v);
+                    if (distance[current] == distance[v] + weight) {
+                        current = v;
+                        break;
+                    }
+                }
+            }
+            path.push_back(source);
+            std::reverse(path.begin(), path.end());
+            result[i] = std::make_pair(distance[i], path);
+        }
+    }
 }

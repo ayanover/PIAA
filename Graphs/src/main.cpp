@@ -3,6 +3,7 @@
 #include "adjacency_list_graph.cpp"
 #include "shortest_path_algorithms.cpp"
 #include "../include/graphs/adjacency_list_graph.hpp"
+#include "../include/graphs/adjacency_matrix_graph.hpp"
 
 using ShortestPathResult = std::map<int, std::pair<int, std::vector<int>>>;
 
@@ -16,12 +17,15 @@ int main(int argc, char* argv[])
     }
 
     std::unique_ptr<Graph> graph = AdjacencyListGraph::createGraph(graphFile);
+    //std::unique_ptr<Graph> graph = AdjacencyMatrixGraph::createGraph(graphFile);
     graphFile.close();
-    ShortestPathResult result;
+    ShortestPathResult resultDijkstra;
+    ShortestPathResult resultBellman;
 
-    dijkstra(*graph, 0 , result);
+    dijkstra(*graph, 7 , resultDijkstra);
 
-    for (const auto& [vertexIndex, value] : result)
+
+    for (const auto& [vertexIndex, value] : resultDijkstra)
     {
         std::cout << "Shortest path to vertex " << vertexIndex << " is " << value.first << std::endl;
         std::cout << "Path: ";
