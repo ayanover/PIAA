@@ -82,7 +82,7 @@ TEST_CASE("Adjacency Matrix Graph -- Dijkstra")
                                                          dataDirectoryPath / "sp_result" / "spV200D0.75.txt"));
 
     std::ifstream inputStream{inputFile}, refStream{refFile};
-    auto graph = AdjacencyMatrixGraph::createGraph(inputStream);
+    auto graph = AdjacencyListGraph::createGraph(inputStream);
 
     ShortestPathResult result, refResult;
     readShortestPathResult(refStream, refResult);
@@ -128,7 +128,7 @@ TEST_CASE("Adjacency Matrix Graph -- Bellman-Ford")
                                                          dataDirectoryPath / "sp_result" / "spV200D0.75.txt"));
 
     std::ifstream inputStream{inputFile}, refStream{refFile};
-    auto graph = AdjacencyMatrixGraph::createGraph(inputStream);
+    auto graph = AdjacencyListGraph::createGraph(inputStream);
 
     ShortestPathResult result, refResult;
     readShortestPathResult(refStream, refResult);

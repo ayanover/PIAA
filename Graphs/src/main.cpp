@@ -1,10 +1,13 @@
 #include <iostream>
 #include <fstream>
 #include "adjacency_list_graph.cpp"
+#include "shortest_path_algorithms.cpp"
+#include "../include/graphs/adjacency_list_graph.hpp"
+
+using ShortestPathResult = std::map<int, std::pair<int, std::vector<int>>>;
 
 int main(int argc, char* argv[])
 {
-    std::cout<< "Tu wykonujemy testy efektywności algorytmów"<<std::endl;
     std::ifstream graphFile("../sp_data/graph/graphV10D0.5.txt");
     if (!graphFile)
     {
@@ -12,8 +15,22 @@ int main(int argc, char* argv[])
         return 1;
     }
 
-    Graph graph = c
+    std::unique_ptr<Graph> graph = AdjacencyListGraph::createGraph(graphFile);
+    graphFile.close();
+    ShortestPathResult result;
 
+    dijkstra(*graph, 0 , result);
+
+    for (const auto& [vertexIndex, value] : result)
+    {
+        std::cout << "Shortest path to vertex " << vertexIndex << " is " << value.first << std::endl;
+        std::cout << "Path: ";
+        for (int v : value.second)
+        {
+            std::cout << v << " ";
+        }
+        std::cout << std::endl;
+    }
 
 
     return 0;

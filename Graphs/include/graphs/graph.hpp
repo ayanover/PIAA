@@ -18,9 +18,6 @@ public:
 
     virtual int getEdgeWeight(int v1, int v2) = 0;
 
-    // Pure virtual function to print the adjacency list
-    virtual void printAdjList() = 0;
-
     // Function to get the end vertices of edge e
     virtual std::vector<int> endVertices(int e) = 0;
 
@@ -57,10 +54,6 @@ public:
     // Function to get all edges in the graph
     virtual std::vector<int> edges() = 0;
 
-    // Static function to create graph from input stream
-    static std::unique_ptr<Graph> createGraph(std::istream &is);
-
-    virtual void printAdjMatrix();
 };
 
 #endif /* GRAPH_HPP_ */

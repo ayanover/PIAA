@@ -52,19 +52,6 @@ public:
         return -1;
     }
 
-    void printAdjList() override
-    {
-        for (int i = 0; i < V; ++i)
-        {
-            std::cout << "Vertex " << i << " :";
-            for (const Edge &edge : adjList[i])
-            {
-                std::cout << " -> " << edge.dest << " (Weight: " << edge.weight << ")";
-            }
-            std::cout << std::endl;
-        }
-    }
-
     std::vector<int> endVertices(int e) override
     {
         if (e >= adjList.size() || adjList[e].empty())
@@ -192,7 +179,22 @@ public:
         return result;
     }
 
-    std::unique_ptr<Graph> createGraph(std::istream &is);
+    static std::unique_ptr<Graph> createGraph(std::istream &is)
+        {
+            int V, E;
+            is >> V >> E;
+
+            std::unique_ptr<AdjacencyListGraph> graph = std::make_unique<AdjacencyListGraph>(V);
+
+            int v1, v2, weight;
+            for (int i = 0; i < E; ++i)
+            {
+                is >> v1 >> v2 >> weight;
+                graph->insertEdge(v1, v2, weight);
+            }
+
+            return std::move(graph);
+        };
 };
 
 #endif /* ADJACENCY_LIST_GRAPH_HPP_ */

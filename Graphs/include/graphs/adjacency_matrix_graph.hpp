@@ -29,17 +29,6 @@ public:
     }
 
     // Function to print the adjacency matrix
-    void printAdjMatrix() override
-    {
-        for (int i = 0; i < V; ++i)
-        {
-            for (int j = 0; j < V; ++j)
-            {
-                std::cout << adjMatrix[i][j] << " ";
-            }
-            std::cout << std::endl;
-        }
-    }
 
     std::vector<int> endVertices(int e) override
     {
@@ -175,22 +164,6 @@ public:
     }
 
     // Static function to create graph from input stream
-    static std::unique_ptr<Graph> createGraph(std::istream &is)
-    {
-        int V, E;
-        is >> V >> E;
-
-        std::unique_ptr<AdjacencyMatrixGraph> graph = std::make_unique<AdjacencyMatrixGraph>(V);
-
-        int v1, v2, o;
-        for (int i = 0; i < E; ++i)
-        {
-            is >> v1 >> v2 >> o;
-            graph->insertEdge(v1, v2, o);
-        }
-
-        return std::move(graph);
-    }
 };
 
 #endif /* ADJACENCY_MATRIX_GRAPH_HPP_ */
