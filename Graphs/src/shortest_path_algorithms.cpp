@@ -7,49 +7,47 @@
 #include <limits>
 #include <map>
 #include <algorithm>
+#include <unordered_set>
 
 
-void dijkstra(Graph &graph, int sourceIndex, ShortestPathResult &result)
-{
-    const int INF = std::numeric_limits<int>::max();
+const int INF = std::numeric_limits<int>::max();
+
+void dijkstra(Graph& graph, int sourceIndex, ShortestPathResult& result) {
+    std::unordered_set<int> visited;
 
     int V = graph.vertices().size();
-    result.clear();
 
     std::priority_queue<std::pair<int, int>, std::vector<std::pair<int, int>>, std::greater<std::pair<int, int>>> pq;
     pq.push({0, sourceIndex});
 
-    while (!pq.empty())
-    {
+    while (!pq.empty()) {
         int u = pq.top().second;
         int uDist = pq.top().first;
         pq.pop();
 
-        if (result.find(u) != result.end())
+        if (visited.find(u) != visited.end())
             continue;
 
-        result[u] = {uDist, {}};
+        visited.insert(u);
+
+        result[u].first = uDist;
+        result[result[u].second].second.push_back(u);
 
         std::vector<int> neighbors = graph.incidentEdges(u);
-        for (int &v : neighbors)
-           {
+        for (int v : neighbors) {
             std::vector<int> endVertices = graph.endVertices(v);
             int oppositeVertex = (u == endVertices[0]) ? endVertices[1] : endVertices[0];
             int edgeWeight = graph.getEdgeWeight(u, oppositeVertex);
 
-               if (result.find(oppositeVertex) == result.end() || uDist + edgeWeight < result[oppositeVertex].first)
-               {
-                   result[oppositeVertex] = {uDist + edgeWeight, result[u].second}; // Update path to include the path from source to u
-                   result[oppositeVertex].second.push_back(u); // Append u to the path
-                   pq.push({uDist + edgeWeight, oppositeVertex});
-               }
-               else if (uDist + edgeWeight == result[oppositeVertex].first)
-               {
-                   result[oppositeVertex].second.push_back(u);
-               }
-
-           }
+            if (visited.find(oppositeVertex) == visited.end() || uDist + edgeWeight < result[oppositeVertex].first) {
+                result[oppositeVertex] = {uDist + edgeWeight, result[u].second}; // Update path to include the path from source to u
+                result[oppositeVertex].second.emplace_back(oppositeVertex); // Append u to the path
+                result = result;
+                pq.push({uDist + edgeWeight, oppositeVertex});
+            }
+        }
     }
+    result = result;
 }
 
 bool bellmanFord(Graph& graph, int source, ShortestPathResult& result)
