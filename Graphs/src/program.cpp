@@ -8,7 +8,8 @@
 #include "../include/graphs/shortest_path_algorithms.hpp"
 #include "../include/graphs/adjacency_list_graph.hpp"
 #include "../include/graphs/adjacency_matrix_graph.hpp"
-
+bool bellmanFord(Graph& graph, int sourceIndex, ShortestPathResult& result) {}
+void dijkstra(Graph& graph, int sourceIndex, ShortestPathResult& result){}
 void drawImplementationMenu(){
     int choice, algorithmChoice;
     std::cout<< "What implementation would you like to test?" << std::endl << std::endl;

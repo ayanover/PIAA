@@ -53,19 +53,7 @@ void dijkstra(Graph& graph, int sourceIndex, ShortestPathResult& result) {
 }
 
 
-std::vector<int> constructPath(std::vector<int>& pred, int source, int dest) {
-    std::vector<int> path;
-    int current = dest;
-    while (current != -1) {
-        path.push_back(current);
-        current = pred[current];
-    }
-    std::reverse(path.begin(), path.end());
-    if (path[0] != source) {
-        return {};
-    }
-    return path;
-}
+
 
 bool bellmanFord(Graph& graph, int sourceIndex, ShortestPathResult& result) {
     int V = graph.vertices().size();
