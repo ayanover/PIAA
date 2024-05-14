@@ -13,12 +13,19 @@
 const int INF = std::numeric_limits<int>::max();
 
 void dijkstra(Graph& graph, int sourceIndex, ShortestPathResult& result) {
-    std::unordered_set<int> visited;
-
     int V = graph.vertices().size();
+    std::unordered_set<int> visited;
+    for (int i = 0; i < V; ++i) {
+        result[i] = {std::numeric_limits<int>::max(), std::vector<int>()};
+    }
+    // Custom comparison function for the priority queue
+    auto compare = [](const std::pair<int, int>& lhs, const std::pair<int, int>& rhs) {
+        return lhs.first > rhs.first; // Compare based on distance
+    };
+    std::priority_queue<std::pair<int, int>, std::vector<std::pair<int, int>>, decltype(compare)> pq(compare);
 
-    std::priority_queue<std::pair<int, int>, std::vector<std::pair<int, int>>, std::greater<std::pair<int, int>>> pq;
     pq.push({0, sourceIndex});
+    result[sourceIndex] = {0, std::vector<int>{sourceIndex}}; // Distance from source to itself is 0, and path is empty
 
     while (!pq.empty()) {
         int u = pq.top().second;
@@ -30,83 +37,79 @@ void dijkstra(Graph& graph, int sourceIndex, ShortestPathResult& result) {
 
         visited.insert(u);
 
-        result[u].first = uDist;
-        result[result[u].second].second.push_back(u);
+        std::vector<std::pair<int, int>> neighbors = graph.incidentEdges(u);
+        for (const auto& v : neighbors) {
+            int edgeWeight = graph.getEdgeWeight(u, v.first);
 
-        std::vector<int> neighbors = graph.incidentEdges(u);
-        for (int v : neighbors) {
-            std::vector<int> endVertices = graph.endVertices(v);
-            int oppositeVertex = (u == endVertices[0]) ? endVertices[1] : endVertices[0];
-            int edgeWeight = graph.getEdgeWeight(u, oppositeVertex);
+            if ((uDist + edgeWeight) < result[v.first].first) {
+                result[v.first].first = uDist + edgeWeight; // Update shortest distance
+                result[v.first].second = result[u].second; // Update shortest path
+                result[v.first].second.push_back(v.first); // Append v to the path
 
-            if (visited.find(oppositeVertex) == visited.end() || uDist + edgeWeight < result[oppositeVertex].first) {
-                result[oppositeVertex] = {uDist + edgeWeight, result[u].second}; // Update path to include the path from source to u
-                result[oppositeVertex].second.emplace_back(oppositeVertex); // Append u to the path
-                result = result;
-                pq.push({uDist + edgeWeight, oppositeVertex});
+                pq.push({result[v.first].first, v.first}); // Push the updated distance and vertex to the priority queue
             }
         }
     }
-    result = result;
 }
 
-bool bellmanFord(Graph& graph, int source, ShortestPathResult& result)
-{
-    const int INF = std::numeric_limits<int>::max();
-    int V = graph.vertices().size();
-    std::vector<int> distance(V, INF);
-    distance[source] = 0;
 
-    // Relax all edges |V| - 1 times
+std::vector<int> constructPath(std::vector<int>& pred, int source, int dest) {
+    std::vector<int> path;
+    int current = dest;
+    while (current != -1) {
+        path.push_back(current);
+        current = pred[current];
+    }
+    std::reverse(path.begin(), path.end());
+    if (path[0] != source) {
+        return {};
+    }
+    return path;
+}
+
+bool bellmanFord(Graph& graph, int sourceIndex, ShortestPathResult& result) {
+    int V = graph.vertices().size();
+    std::vector<int> distance(V, std::numeric_limits<int>::max());
+    std::vector<int> parent(V, -1);
+
+    distance[sourceIndex] = 0;
+
     for (int i = 0; i < V - 1; ++i) {
         for (int u = 0; u < V; ++u) {
-            std::vector<int> adjacentEdges = graph.incidentEdges(u);
-            for (int e : adjacentEdges) {
-                auto endpoints = graph.endVertices(e);
-                int v = (endpoints[0] == u) ? endpoints[1] : endpoints[0];
-                int weight = graph.getEdgeWeight(u, v);
-                if (distance[u] != INF && distance[u] + weight < distance[v]) {
-                    distance[v] = distance[u] + weight;
+            for (const auto& neighbor : graph.incidentEdges(u)) {
+                int v = neighbor.first;
+                int weightUV = neighbor.second;
+
+                if (distance[u] != std::numeric_limits<int>::max() && distance[u] + weightUV < distance[v]) {
+                    distance[v] = distance[u] + weightUV;
+                    parent[v] = u;
                 }
             }
         }
     }
 
-    // Check for negative weight cycles
+    //czy istnieją ujemne cykle
     for (int u = 0; u < V; ++u) {
-        std::vector<int> adjacentEdges = graph.incidentEdges(u);
-        for (int e : adjacentEdges) {
-            auto endpoints = graph.endVertices(e);
-            int v = (endpoints[0] == u) ? endpoints[1] : endpoints[0];
-            int weight = graph.getEdgeWeight(u, v);
-            if (distance[u] != INF && distance[u] + weight < distance[v]) {
-                // Negative weight cycle detected
-                throw std::runtime_error("Graph contains a negative weight cycle");
+        for (const auto& neighbor : graph.incidentEdges(u)) {
+            int v = neighbor.first;
+            int weightUV = neighbor.second;
+
+            if (distance[u] != std::numeric_limits<int>::max() && distance[u] + weightUV < distance[v]) {
+                return false;
             }
         }
     }
 
-    // Store shortest paths in result variable
+    // Zapisz odległości i ścieżki w wynikach
     for (int i = 0; i < V; ++i) {
-        if (i != source && distance[i] != INF) {
-            std::vector<int> path;
-            int current = i;
-            while (current != source) {
-                path.push_back(current);
-                std::vector<int> adjacentEdges = graph.incidentEdges(current);
-                for (int e : adjacentEdges) {
-                    auto endpoints = graph.endVertices(e);
-                    int v = (endpoints[0] == current) ? endpoints[1] : endpoints[0];
-                    int weight = graph.getEdgeWeight(current, v);
-                    if (distance[current] == distance[v] + weight) {
-                        current = v;
-                        break;
-                    }
-                }
-            }
-            path.push_back(source);
-            std::reverse(path.begin(), path.end());
-            result[i] = std::make_pair(distance[i], path);
+        std::vector<int> path;
+        int current = i;
+        while (current != -1) {
+            path.insert(path.begin(), current);
+            current = parent[current];
         }
+        result[i] = {distance[i], path};
     }
+
+    return true;
 }

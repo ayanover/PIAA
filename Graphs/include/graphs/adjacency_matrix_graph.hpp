@@ -1,16 +1,26 @@
+#ifndef ADJACENCY_MATRIX_GRAPH_HPP_
+#define ADJACENCY_MATRIX_GRAPH_HPP_
+
 #include <iostream>
 #include <vector>
 #include <memory>
-#include <sstream>
 #include <stdexcept>
+#include "Graph.hpp"
 
 class AdjacencyMatrixGraph : public Graph {
 private:
+    struct Edge {
+        int src;
+        int dest;
+        int weight;
+        Edge(int s, int d, int w) : src(s), dest(d), weight(w) {}
+    };
+
+    std::vector<Edge> Edges;
     std::vector<std::vector<int>> adjacencyMatrix;
 
 public:
     explicit AdjacencyMatrixGraph(int vertices) : Graph(vertices) {
-        // Initialize the adjacency matrix with all zeros
         adjacencyMatrix.resize(V, std::vector<int>(V, 0));
     }
 
@@ -19,7 +29,8 @@ public:
             throw std::out_of_range("Vertex index out of range");
         }
         adjacencyMatrix[v1][v2] = weight;
-        adjacencyMatrix[v2][v1] = weight; // Assuming undirected graph
+        adjacencyMatrix[v2][v1] = weight;
+        Edges.emplace_back(v1, v2, weight);
     }
 
     int getEdgeWeight(int v1, int v2) override {
@@ -30,31 +41,26 @@ public:
     }
 
     std::vector<int> endVertices(int e) override {
-        std::vector<int> endpoints;
-        for (int i = 0; i < V; ++i) {
-            if (adjacencyMatrix[e][i] != 0) {
-                endpoints.push_back(i);
-            }
+        if (e >= Edges.size() || e < 0) {
+            throw std::out_of_range("Edge index out of range");
         }
-        return endpoints;
+        return {Edges[e].src, Edges[e].dest};
     }
 
     int opposite(int v, int e) override {
-        if (e >= V || e < 0) {
+        if (e >= Edges.size() || e < 0) {
             throw std::out_of_range("Edge index out of range");
         }
         if (v >= V || v < 0) {
             throw std::out_of_range("Vertex index out of range");
         }
-        if (adjacencyMatrix[v][e] == 0) {
-            throw std::invalid_argument("Vertex and edge are not adjacent");
+        if (Edges[e].src == v) {
+            return Edges[e].dest;
+        } else if (Edges[e].dest == v) {
+            return Edges[e].src;
+        } else {
+            throw std::invalid_argument("Vertex and edge are not incident");
         }
-        for (int i = 0; i < V; ++i) {
-            if (adjacencyMatrix[v][i] != 0 && i != e) {
-                return i;
-            }
-        }
-        throw std::logic_error("No opposite vertex found");
     }
 
     bool areAdjacent(int v, int w) override {
@@ -68,14 +74,6 @@ public:
         if (v >= V || v < 0) {
             throw std::out_of_range("Vertex index out of range");
         }
-        // Assuming 'x' is the new value for vertex 'v'
-    }
-
-    void replaceEdge(int e, int x) override {
-        if (e >= V || e < 0) {
-            throw std::out_of_range("Edge index out of range");
-        }
-        // Assuming 'x' is the new value for edge 'e'
     }
 
     void insertVertex(int o) override {
@@ -84,11 +82,9 @@ public:
         for (int i = 0; i < V; ++i) {
             adjacencyMatrix[i].resize(V, 0);
         }
-        // Assuming 'o' is the new value for the inserted vertex
     }
 
     void insertEdge(int v, int w, int o) override {
-        // Assuming 'o' is the new value for the inserted edge
         addEdge(v, w, o);
     }
 
@@ -100,30 +96,38 @@ public:
         for (auto &row : adjacencyMatrix) {
             row.erase(row.begin() + v);
         }
+        // Remove Edges connected to the vertex being removed
+        Edges.erase(std::remove_if(Edges.begin(), Edges.end(), [v](const Edge& edge) {
+            return edge.src == v || edge.dest == v;
+        }), Edges.end());
         --V;
     }
 
-    void removeEdge(int e) override {
-        if (e >= V || e < 0) {
-            throw std::out_of_range("Edge index out of range");
+    void removeEdge(int v1, int v2) override {
+        if (v1 >= V || v2 >= V || v1 < 0 || v2 < 0) {
+            throw std::out_of_range("Vertex index out of range");
         }
-        for (int i = 0; i < V; ++i) {
-            adjacencyMatrix[i][e] = 0;
-            adjacencyMatrix[e][i] = 0;
-        }
+        adjacencyMatrix[v1][v2] = 0;
+        adjacencyMatrix[v2][v1] = 0;
+        // Remove the edge from the Edges vector
+        Edges.erase(std::remove_if(Edges.begin(), Edges.end(), [v1, v2](const Edge& edge) {
+            return (edge.src == v1 && edge.dest == v2) || (edge.src == v2 && edge.dest == v1);
+        }), Edges.end());
     }
 
-    std::vector<int> incidentEdges(int v) override {
+    std::vector<std::pair<int, int>> incidentEdges(int v) override {
         if (v >= V || v < 0) {
             throw std::out_of_range("Vertex index out of range");
         }
-        std::vector<int> edges;
-        for (int i = 0; i < V; ++i) {
-            if (adjacencyMatrix[v][i] != 0) {
-                edges.push_back(i);
+        std::vector<std::pair<int, int>> incidentEdges;
+        for (const auto& edge : Edges) {
+            if (edge.src == v) {
+                incidentEdges.push_back(std::make_pair(edge.dest, edge.weight));
+            } else if (edge.dest == v) {
+                incidentEdges.push_back(std::make_pair(edge.src, edge.weight));
             }
         }
-        return edges;
+        return incidentEdges;
     }
 
     std::vector<int> vertices() override {
@@ -134,17 +138,18 @@ public:
         return vert;
     }
 
-    std::vector<int> edges() override {
-        std::vector<int> edge;
-        for (int i = 0; i < V; ++i) {
-            for (int j = i + 1; j < V; ++j) {
-                if (adjacencyMatrix[i][j] != 0) {
-                    edge.push_back(adjacencyMatrix[i][j]);
-                }
-            }
+    std::vector<std::vector<int>> edges(bool isBuilding) override {
+        std::vector<std::vector<int>> res;
+        int i=0;
+        for (const auto& edge : Edges) {
+            res[i].push_back(edge.src);
+            res[i].push_back(edge.dest);
+            res[i].push_back(edge.weight);
+            i++;
         }
-        return edge;
+        return res;
     }
+
     static std::unique_ptr<Graph> createGraph(std::istream &input) {
         int vertices;
         input >> vertices;
@@ -164,5 +169,4 @@ public:
     }
 };
 
-// Function to create graph from input stream
-
+#endif /* ADJACENCY_MATRIX_GRAPH_HPP_ */

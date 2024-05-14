@@ -2,73 +2,111 @@
 #include <fstream>
 #include <unordered_map>
 #include <ctime>
+#include <random>
+#include <chrono>
 #include "adjacency_list_graph.cpp"
 #include "shortest_path_algorithms.cpp"
 #include "../include/graphs/adjacency_list_graph.hpp"
 #include "../include/graphs/adjacency_matrix_graph.hpp"
+#include "../include/graphs/random_graph_generator.hpp"
 
-using ShortestPathResult = std::map<int, std::pair<int, std::vector<int>>>;
+double average(double arr[], long size) {
+    double sum = 0.0;
 
-std::unordered_map<int, std::vector<std::pair<int, int>>> generate_weighted_adjacency_list(int num_elements, int fill_percent) {
-    std::unordered_map<int, std::vector<std::pair<int, int>>> adjacency_list;
+    for (int i = 0; i < 1; ++i) {
+        sum += arr[i];
+    }
 
-    // Calculate the number of edges based on fill percentage
-    int num_edges = (num_elements * (num_elements - 1) / 2) * (fill_percent / 100);
-
-    // Seed the random number generator
-    std::srand(std::time(nullptr));
-
-    // Generate random edges with weights
-    std::vector<std::pair<int, std::pair<int, int>>> edges;
-    for (int i = 0; i < num_elements; ++i) {
-        for (int j = i + 1; j < num_elements; ++j) {
-            edges.push_back({i, {j, std::rand() % 100 + 1}});  // random weights between 1 and 100
+    double average = sum / size;
+    return average;
+}
+void SaveMeasurementsToFile(std::vector<double> data, std::string filename){
+    std::ofstream outputFile(filename);
+    if (outputFile.is_open()) {
+        for (int i = 0; i < data.size(); i++) {
+            outputFile << data[i] * 1000 << "\n";
         }
+        outputFile.close();
+        std::cout << "Measurements saved to " << filename << std::endl;
+    } else {
+        std::cerr << "Unable to open file for writing." << std::endl;
     }
-
-    // Shuffle the edges vector
-    std::random_shuffle(edges.begin(), edges.end());
-
-    // Add edges to the adjacency list
-    for (auto edge : edges) {
-        int u = edge.first;
-        int v = edge.second.first;
-        int weight = edge.second.second;
-        adjacency_list[u].push_back({v, weight});
-        adjacency_list[v].push_back({u, weight});
-        if (adjacency_list[u].size() >= num_elements - 1) break;  // Ensure each node has at most (num_elements - 1) edges
-    }
-
-    return adjacency_list;
 }
 
 int main(int argc, char* argv[])
 {
-    std::ifstream graphFile("../sp_data/graph/graphV10D0.5.txt");
-    if (!graphFile)
-    {
-        std::cerr << "Error: Unable to open graph data file." << std::endl;
-        return 1;
-    }
-
-    std::unique_ptr<Graph> graph = AdjacencyListGraph::createGraph(graphFile);
-    //std::unique_ptr<Graph> graph = AdjacencyMatrixGraph::createGraph(graphFile);
-    graphFile.close();
+    std::vector<double> dijkstraListMeasurements;
+    std::vector<double> dijkstraMatrixMeasurements;
+    std::vector<double> bellmanListMeasurements;
+    std::vector<double> bellmanMatrixMeasurements;
     ShortestPathResult resultDijkstra;
     ShortestPathResult resultBellman;
+    const int ITERATIONS = 1;
+    int num_elements[] = {10, 50, 100, 500, 1000};
+    int fill_percent[] = {25, 50, 75, 100};
+    for(int fill : fill_percent){
+        for(int num : num_elements){
+            std::vector<double> measurements;
+            double dijkstraList[ITERATIONS];
+            double dijkstraMatrix[ITERATIONS];
+            double bellmanList[ITERATIONS];
+            double bellmanMatrix[ITERATIONS];
+            for(int i=0; i< ITERATIONS; i++){
+                std::unique_ptr<AdjacencyListGraph> graphList(new AdjacencyListGraph(num));
+                std::unique_ptr<AdjacencyListGraph> graphMatrix(new AdjacencyListGraph(num));
+                RandomGraphGenerator::generateRandomGraph(*graphList, num , fill);
+                RandomGraphGenerator::generateRandomGraph(*graphMatrix, num , fill);
 
-    dijkstra(*graph, 7 , resultDijkstra);
+                auto start = std::chrono::high_resolution_clock::now();
+                dijkstra(*graphList, 0 , resultDijkstra);
+                auto end = std::chrono::high_resolution_clock::now();
+                std::chrono::duration<double> durationDijkstraList = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
+                dijkstraList[i] = durationDijkstraList.count();
 
+                start = std::chrono::high_resolution_clock::now();
+                dijkstra(*graphMatrix, 0 , resultDijkstra);
+                end = std::chrono::high_resolution_clock::now();
+                std::chrono::duration<double> durationDijkstraMatrix = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
+                dijkstraMatrix[i] = durationDijkstraMatrix.count();
 
-    for (const auto& [vertexIndex, value] : resultDijkstra)
-    {
-        std::cout << "Shortest path to vertex " << vertexIndex << " is " << value.first << std::endl;
-        std::cout << "Path: ";
-        for (int v : value.second)
-        {
-            std::cout << v << " ";
+                start = std::chrono::high_resolution_clock::now();
+                bellmanFord(*graphList, 0 , resultDijkstra);
+                end = std::chrono::high_resolution_clock::now();
+                std::chrono::duration<double> durationBellmanList = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
+                bellmanList[i] = durationBellmanList.count();
+
+                start = std::chrono::high_resolution_clock::now();
+                bellmanFord(*graphMatrix, 0 , resultDijkstra);
+                end = std::chrono::high_resolution_clock::now();
+                std::chrono::duration<double> durationBellmanMatrix = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
+                bellmanMatrix[i] = durationBellmanMatrix.count();
+            }
+
+            measurements.push_back(average(dijkstraList, sizeof(dijkstraList)-1));
+            measurements.push_back(average(dijkstraMatrix, sizeof(dijkstraMatrix)-1));
+            measurements.push_back(average(bellmanList, sizeof(bellmanList)-1));
+            measurements.push_back(average(bellmanMatrix, sizeof(bellmanMatrix)-1));
+
+            dijkstraListMeasurements.push_back(average(dijkstraList, sizeof(dijkstraList)-1));
+            dijkstraMatrixMeasurements.push_back(average(dijkstraMatrix, sizeof(dijkstraMatrix)-1));
+            bellmanListMeasurements.push_back(average(bellmanList, sizeof(bellmanList)-1));
+            bellmanMatrixMeasurements.push_back(average(bellmanMatrix, sizeof(bellmanMatrix)-1));
+            std::cout<< measurements[0] * 1000 << " " << measurements[1] * 1000 << " " << measurements[2] * 1000 << " " << measurements[3]*1000 << std::endl;
+            //std::cout<< dijkstraListMeasurements[1] * 1000 << " " << dijkstraMatrixMeasurements[0] * 1000 << " " << bellmanListMeasurements[0] * 1000 << std::endl;
+            //std::cout<< dijkstraListMeasurements[2] * 1000 << std::endl;
+            //std::cout<< dijkstraListMeasurements[3] * 1000 << std::endl;
         }
-        std::cout << std::endl;
+
+
+        SaveMeasurementsToFile(dijkstraListMeasurements, std::to_string(fill)+"_dijkstraList.txt");
+        SaveMeasurementsToFile(dijkstraMatrixMeasurements, std::to_string(fill)+"_dijkstraMatrix.txt");
+        SaveMeasurementsToFile(bellmanListMeasurements, std::to_string(fill)+"_bellmanList.txt");
+        SaveMeasurementsToFile(bellmanMatrixMeasurements, std::to_string(fill)+"_bellmanMatrix.txt");
+
+        dijkstraListMeasurements.clear();
+        dijkstraMatrixMeasurements.clear();
+        bellmanListMeasurements.clear();
+        bellmanMatrixMeasurements.clear();
     }
 
 
